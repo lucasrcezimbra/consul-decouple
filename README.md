@@ -9,7 +9,7 @@ pip install consul-decouple
 
 ## How it works
 1. Read config from environment;
-1. If is connected with Consul, read config from there;
+1. If it's connected with Consul, it'll read the config from there;
 1. python-decouple behavior:
     1. Repository: ini or .env file;
     1. default argument passed to config;
