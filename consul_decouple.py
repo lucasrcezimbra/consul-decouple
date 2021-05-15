@@ -18,8 +18,11 @@ class RepositoryConsulJson(RepositoryEmpty):
 
     def load_data(self):
         _, rawdata = self.consul.kv.get(self.key)
-        decoded_value = rawdata['Value'].decode(self.encoding)
-        self._data = json.loads(decoded_value)
+        if rawdata:
+            decoded_value = rawdata['Value'].decode(self.encoding)
+            self._data = json.loads(decoded_value)
+        else:
+            self._data = {}
 
     @property
     def data(self):
@@ -43,8 +46,9 @@ class RepositoryConsulKV(RepositoryEmpty):
 
     def load_key(self, key):
         _, rawdata = self.consul.kv.get(key)
-        value = rawdata['Value'].decode(self.encoding)
-        self.data[key] = value
+        if rawdata:
+            value = rawdata['Value'].decode(self.encoding)
+            self.data[key] = value
 
     def __contains__(self, key):
         if key not in self.data:

@@ -1,3 +1,5 @@
+import pytest
+
 from consul_decouple import RepositoryConsulKV
 
 
@@ -25,3 +27,13 @@ def test_getitem_without_contains(consul):
     repository = RepositoryConsulKV(consul)
 
     assert repository[key] == value
+
+
+def test_get_nonexistent(consul):
+    key = 'foo'
+
+    repository = RepositoryConsulKV(consul)
+
+    assert key not in repository
+    with pytest.raises(KeyError):
+        repository[key]

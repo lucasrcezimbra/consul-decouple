@@ -66,3 +66,11 @@ def test_getitem(consul):
     assert repository['k2'] == 'v2'
     with pytest.raises(KeyError):
         repository['k3']
+
+
+def test_get_nonexistent(consul):
+    json_kv = 'nonexistent'
+
+    repository = RepositoryConsulJson(consul, json_kv)
+
+    assert repository.data == {}
