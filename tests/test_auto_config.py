@@ -73,7 +73,7 @@ def test_has_consul_connection(consul):
     assert AutoConfig(consul_without_connection).has_consul_connection() is False
 
 
-def test_autoconfig_consul(consul):
+def test_autoconfig_consul_key(consul):
     key, value = 'k1', {'v1': '1', 'v2': '2'}
     consul.kv.put(key, json.dumps(value))
 
@@ -109,3 +109,12 @@ def test_autoconfig_env(mocker):
     mocker.patch.object(config, '_caller_path', return_value=path)
 
     assert config('KEY') == 'ENV'
+
+
+def test_autoconfig_consul_without_key(consul):
+    key, value = 'k1', 'v1'
+    consul.kv.put(key, value)
+
+    config = AutoConfig(consul)
+
+    assert config(key) == 'v1'

@@ -16,12 +16,15 @@ class RepositoryConsulJson(RepositoryEmpty):
         self.encoding = encoding
         self._data = None
 
+    def load_data(self):
+        _, rawdata = self.consul.kv.get(self.key)
+        decoded_value = rawdata['Value'].decode(self.encoding)
+        self._data = json.loads(decoded_value)
+
     @property
     def data(self):
         if self._data is None:
-            _, rawdata = self.consul.kv.get(self.key)
-            decoded_value = rawdata['Value'].decode(self.encoding)
-            self._data = json.loads(decoded_value)
+            self.load_data()
 
         return self._data
 
@@ -29,6 +32,27 @@ class RepositoryConsulJson(RepositoryEmpty):
         return key in self.data
 
     def __getitem__(self, key):
+        return self.data[key]
+
+
+class RepositoryConsulKV(RepositoryEmpty):
+    def __init__(self, consul, encoding=DEFAULT_ENCODING):
+        self.consul = consul
+        self.encoding = encoding
+        self.data = {}
+
+    def load_key(self, key):
+        _, rawdata = self.consul.kv.get(key)
+        value = rawdata['Value'].decode(self.encoding)
+        self.data[key] = value
+
+    def __contains__(self, key):
+        if key not in self.data:
+            self.load_key(key)
+        return key in self.data
+
+    def __getitem__(self, key):
+        key in self  # ensures load
         return self.data[key]
 
 
@@ -50,9 +74,15 @@ class AutoConfig(AutoConfigBase):
 
     def _load(self, path):
         if self.has_consul_connection():
-            self.config = ConfigBase(RepositoryConsulJson(self.consul, self.key))
+            self._load_consul()
         else:
             super()._load(path)
+
+    def _load_consul(self):
+        if self.key:
+            self.config = ConfigBase(RepositoryConsulJson(self.consul, self.key))
+        else:
+            self.config = ConfigBase(RepositoryConsulKV(self.consul))
 
     def has_consul_connection(self):
         try:
