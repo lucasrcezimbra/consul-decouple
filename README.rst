@@ -1,6 +1,10 @@
 consul-decouple
 ===============
 
+.. image:: https://badge.fury.io/py/consul-decouple.svg
+    :target: https://badge.fury.io/py/consul-decouple
+    :alt: PyPI
+
 An extension for
 `python-decouple <https://github.com/henriquebastos/python-decouple>`__
 to read Consul using
