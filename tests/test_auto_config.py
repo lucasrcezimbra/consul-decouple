@@ -10,18 +10,18 @@ def test_config_environ(mocker):
     key, value = 'foo', 'bar'
     mocker.patch.dict('os.environ', {key: value})
 
-    config = AutoConfig(key=key)
+    config = AutoConfig()
 
     assert config(key) == value
 
 
 def test_init(mocker):
-    consul, key, search_path = mocker.MagicMock(), 'key', './'
+    consul, json_kv, search_path = mocker.MagicMock(), 'json_kv', './'
 
-    config = AutoConfig(consul=consul, key=key, search_path=search_path)
+    config = AutoConfig(consul=consul, json_kv=json_kv, search_path=search_path)
 
     assert config.consul == consul
-    assert config.key == key
+    assert config.json_kv == json_kv
     assert config.search_path == search_path
     assert config.config is None
 
@@ -73,21 +73,21 @@ def test_has_consul_connection(consul):
     assert AutoConfig(consul_without_connection).has_consul_connection() is False
 
 
-def test_autoconfig_consul_key(consul):
-    key, value = 'k1', {'v1': '1', 'v2': '2'}
-    consul.kv.put(key, json.dumps(value))
+def test_autoconfig_consul_json_kv(consul):
+    json_kv, value = 'k1', {'v1': '1', 'v2': '2'}
+    consul.kv.put(json_kv, json.dumps(value))
 
-    config = AutoConfig(consul, key=key)
+    config = AutoConfig(consul, json_kv=json_kv)
 
     assert config('v1') == '1'
     assert config('v2') == '2'
 
 
 def test_autoconfig_consul_from_env(consul):
-    key, value = 'k1', {'v1': '1', 'v2': '2'}
-    consul.kv.put(key, json.dumps(value))
+    json_kv, value = 'k1', {'v1': '1', 'v2': '2'}
+    consul.kv.put(json_kv, json.dumps(value))
 
-    config = AutoConfig(key=key)
+    config = AutoConfig(json_kv=json_kv)
 
     assert config('v1') == '1'
     assert config('v2') == '2'
@@ -111,10 +111,10 @@ def test_autoconfig_env(mocker):
     assert config('KEY') == 'ENV'
 
 
-def test_autoconfig_consul_without_key(consul):
-    key, value = 'k1', 'v1'
-    consul.kv.put(key, value)
+def test_autoconfig_consul_without_json_kv(consul):
+    json_kv, value = 'k1', 'v1'
+    consul.kv.put(json_kv, value)
 
     config = AutoConfig(consul)
 
-    assert config(key) == 'v1'
+    assert config(json_kv) == 'v1'

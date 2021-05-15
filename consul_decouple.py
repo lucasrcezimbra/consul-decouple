@@ -57,10 +57,15 @@ class RepositoryConsulKV(RepositoryEmpty):
 
 
 class AutoConfig(AutoConfigBase):
-    def __init__(self, consul=None, key=None, *args, **kwargs):
-        # TODO: docs
+    def __init__(self, consul=None, json_kv=None, *args, **kwargs):
+        """
+        :param consul: Consul client used to get values
+            If it's received, it will try to create from enviroment variables.
+        :param json_kv: When receive this param will read only this key from Consul,
+            parse as JSON and read keys from this JSON
+        """
         self.consul = consul or self.consul_from_env()
-        self.key = key
+        self.json_kv = json_kv
         super().__init__(*args, **kwargs)
 
     @staticmethod
@@ -79,8 +84,8 @@ class AutoConfig(AutoConfigBase):
             super()._load(path)
 
     def _load_consul(self):
-        if self.key:
-            self.config = ConfigBase(RepositoryConsulJson(self.consul, self.key))
+        if self.json_kv:
+            self.config = ConfigBase(RepositoryConsulJson(self.consul, self.json_kv))
         else:
             self.config = ConfigBase(RepositoryConsulKV(self.consul))
 
@@ -90,3 +95,6 @@ class AutoConfig(AutoConfigBase):
             return True
         except ConnectionError:
             return False
+
+
+config = AutoConfig()
