@@ -2,7 +2,7 @@ import os
 
 from setuptools import setup
 
-README = os.path.join(os.path.dirname(__file__), 'README.md')
+README = os.path.join(os.path.dirname(__file__), 'README.rst')
 
 
 if __name__ == "__main__":
