@@ -1,2 +1,0 @@
-python-consul2
-python-decouple
