@@ -69,4 +69,5 @@ Contribute
     source .venv/bin/activate
     pip install -r requirements-dev.txt
     pre-commit install
+    docker-compose up -d
     pytest
