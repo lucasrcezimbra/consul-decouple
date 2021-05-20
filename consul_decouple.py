@@ -74,11 +74,15 @@ class AutoConfig(AutoConfigBase):
 
     @staticmethod
     def consul_from_env():
-        kwargs = {
-            '_'.join(k.split('_')[1:]).lower(): v
-            for k, v in os.environ.items()
-            if k.startswith('CONSUL')
-        }
+        kwargs = {}
+        expected_kwargs = {'host', 'port', 'token', 'scheme'}
+
+        for key, value in os.environ.items():
+            if not key.startswith('CONSUL'): continue
+            kwarg = '_'.join(key.split('_')[1:]).lower()
+            if kwarg in expected_kwargs:
+                kwargs[kwarg] = value
+
         return Consul(**kwargs)
 
     def _load(self, path):

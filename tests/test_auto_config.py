@@ -66,6 +66,13 @@ def test_consul_from_env(mocker):
     assert consul.http.scheme == scheme
 
 
+def test_consul_from_env_with_invalid_argument(mocker):
+    mocker.patch.dict('os.environ', {
+        'CONSUL_INVALID_ARG': 'X',
+    })
+    AutoConfig.consul_from_env()
+
+
 def test_has_consul_connection(consul):
     assert AutoConfig(consul).has_consul_connection() is True
 
