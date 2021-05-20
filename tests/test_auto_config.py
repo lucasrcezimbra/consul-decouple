@@ -79,6 +79,9 @@ def test_has_consul_connection(consul):
     consul_without_connection = Consul(host='wrong_host')
     assert AutoConfig(consul_without_connection).has_consul_connection() is False
 
+    consul_invalid_url = Consul(host=None, port=None)
+    assert AutoConfig(consul_invalid_url).has_consul_connection() is False
+
 
 def test_autoconfig_consul_json_kv(consul):
     json_kv, value = 'k1', {'v1': '1', 'v2': '2'}

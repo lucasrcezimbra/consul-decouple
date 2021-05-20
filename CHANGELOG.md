@@ -4,6 +4,7 @@ Changelog
 
 0.0.2 (unreleased)
 ------------------
+- Fix verification of Consul connection when URL is invalid
 - Fix Consul init when environment has invalid variables
 
 

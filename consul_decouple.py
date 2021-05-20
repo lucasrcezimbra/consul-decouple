@@ -6,7 +6,7 @@ from decouple import DEFAULT_ENCODING
 from decouple import AutoConfig as AutoConfigBase
 from decouple import Config as ConfigBase
 from decouple import RepositoryEmpty
-from requests.exceptions import ConnectionError
+from requests.exceptions import ConnectionError, InvalidURL
 
 
 class RepositoryConsulJson(RepositoryEmpty):
@@ -101,7 +101,7 @@ class AutoConfig(AutoConfigBase):
         try:
             self.consul.kv.get('ANY_KEY')
             return True
-        except ConnectionError:
+        except (ConnectionError, InvalidURL):
             return False
 
 
